@@ -51,14 +51,12 @@ monitor = pyudev.Monitor.from_netlink(context)
 monitor.filter_by(subsystem='usb') #Filtering only for usb devices
 monitor.start()
 
-#for action, device in monitor:
 for device in iter(monitor.poll, None):
 	action = device.action
 	changed_list = device_list()
 	diff_list = xor(changed_list,first_list)
 	if action == "add":
 		idV, idP = diff_list[0]
-		#print monitor.receive_device()
 		dev = usb.core.find(idVendor=int(idV,16), idProduct=int(idP,16))
 		interface = 0
 		if dev.is_kernel_driver_active(interface) is True:
@@ -85,13 +83,10 @@ for device in iter(monitor.poll, None):
 						mixer.init()
 						mixer.music.load('aud/duck.mp3')
 						mixer.music.play()
-						#enter = raw_input("Press enter when disconnected...")
-						#exit
 					else:
-						# release the device
+						# Release the device
 						usb.util.release_interface(dev, interface)
-						# reattach the device to the OS kernel
+						# Reattach the device to the OS kernel
 						dev.attach_kernel_driver(interface)
-		#break
 
 
